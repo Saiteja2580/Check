@@ -122,7 +122,7 @@ const CheckUploadForm: React.FC<CheckUploadFormProps> = ({
   };
 
   return (
-    <Card className="w-full max-w-lg shadow-lg">
+    <Card className="w-full h-full shadow-lg">
       <CardHeader>
         <CardTitle className="font-headline text-2xl">Upload Check Image</CardTitle>
         <CardDescription>Drag & drop your check image or click to select a file. Supports JPG, PNG, WEBP (max 10MB).</CardDescription>
@@ -136,7 +136,7 @@ const CheckUploadForm: React.FC<CheckUploadFormProps> = ({
             onDrop={handleDrop}
             onClick={onButtonClick}
             className={cn(
-              "flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/80 transition-colors",
+              "flex flex-col items-center justify-center w-full h-[350px] border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/80 transition-colors",
               dragActive ? "border-primary bg-primary/10" : "border-border bg-card",
               imagePreviewUrl ? "p-2" : "p-6"
             )}
@@ -153,9 +153,12 @@ const CheckUploadForm: React.FC<CheckUploadFormProps> = ({
               >
                 <Image
                   src={imagePreviewUrl}
+                  layout='fill'
                   alt="Check preview"
-                  layout="fill"
-                  objectFit="contain" // Keep this as it handles aspect ratio within the container
+                 //objectFit="contain" 
+        objectFit="fill"    
+        //objectFit="none"    
+        //objectFit="scale-down"
                   className="rounded-md transition-transform duration-300 ease-out" // Smooth transition
                   style={{
                     transform: isZoomed ? `scale(${zoomFactor})` : 'scale(1)',

@@ -18,16 +18,27 @@ interface CheckDataTableProps {
 type EditableData = ExtractCheckDataOutput;
 
 // Define the order and labels for table rows
+// Added a dummy field to make the number of fields a multiple of 3 for demonstration
+// If you have a real 8th field, replace 'dummyField' with its actual key and label
 const fieldOrder: Array<{ key: keyof EditableData; label: string }> = [
   { key: 'payee', label: 'Payee' },
   { key: 'amountNumerical', label: 'Amount Numerical' },
-    { key: 'amountWords', label: 'Amount Words' },
+  { key: 'amountWords', label: 'Amount Words' },
   { key: 'date', label: 'Date' },
   { key: 'bankName', label: 'Bank Name' },
-  {key : 'ifscCode',label:'IFSC Cde'},
-  
+  { key: 'ifscCode', label: 'IFSC Code' }, // Corrected label typo
   { key: 'accountNumber', label: 'Account Number' },
+  
 ];
+
+// Helper function to chunk an array
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
+}
 
 const CheckDataTable: React.FC<CheckDataTableProps> = ({ initialData, onSave, isProcessing }) => {
   const [editedData, setEditedData] = useState<EditableData>(initialData);
@@ -36,7 +47,9 @@ const CheckDataTable: React.FC<CheckDataTableProps> = ({ initialData, onSave, is
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setEditedData(initialData);
+    // Merge initialData with editedData to ensure all fields are present,
+    // especially if initialData might be partial
+    setEditedData((prev) => ({ ...prev, ...initialData }));
     setIsEditing(false); // Reset editing state when new initial data arrives
   }, [initialData]);
 
@@ -58,7 +71,7 @@ const CheckDataTable: React.FC<CheckDataTableProps> = ({ initialData, onSave, is
 
   const handleCopyData = () => {
     const dataString = fieldOrder
-      .map(field => `${field.label}: ${editedData[field.key]}`)
+      .map(field => `${field.label}: ${editedData[field.key] || ''}`) // Ensure fallback for undefined values
       .join('\n');
     navigator.clipboard.writeText(dataString)
       .then(() => {
@@ -78,6 +91,9 @@ const CheckDataTable: React.FC<CheckDataTableProps> = ({ initialData, onSave, is
         console.error('Failed to copy: ', err);
       });
   };
+
+  // Divide fields into chunks of 3 for the 3-column layout
+  const chunkedFieldOrder = chunkArray(fieldOrder, 3);
 
   return (
     <Card className="w-full mt-8 shadow-lg">
@@ -103,31 +119,45 @@ const CheckDataTable: React.FC<CheckDataTableProps> = ({ initialData, onSave, is
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[200px] font-semibold">Field</TableHead>
-              <TableHead className="font-semibold">Value</TableHead>
+              {/* Header for the 3 sets of Field | Value */}
+              <TableHead className="w-[100px] font-bold text-xl bg-blue-500 text-white">Field</TableHead>
+              <TableHead className="w-[150px] font-bold text-xl bg-blue-500 text-white">Value</TableHead>
+              <TableHead className="w-[100px] font-bold text-xl bg-blue-500 text-white">Field</TableHead>
+              <TableHead className="w-[150px] font-bold text-xl bg-blue-500 text-white" >Value</TableHead>
+              <TableHead className="w-[100px] font-bold text-xl bg-blue-500 text-white">Field</TableHead>
+              <TableHead className="w-[150px] font-bold text-xl bg-blue-500 text-white">Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {fieldOrder.map((field) => (
-              <TableRow key={field.key}>
-                <TableCell className="font-medium text-muted-foreground">{field.label}</TableCell>
-                <TableCell>
-                  {isEditing ? (
-                    <Input
-                      type="text"
-                      value={editedData[field.key]}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(field.key, e.target.value)}
-                      className="h-8"
-                      disabled={isProcessing}
-                      aria-label={`Edit ${field.label}`}
-                    />
-                  ) : (
-                    <span className="py-2 block">{editedData[field.key] || '-'}</span>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+  {chunkedFieldOrder.map((rowFields, rowIndex) => (
+    <TableRow key={rowIndex}>
+      {rowFields.map((field) => (
+        <React.Fragment key={field.key}>
+          <TableCell className="font-bold text-muted-foreground text-xl text-blue-500">
+            {field.label}
+          </TableCell><TableCell> {/* <-- **CRITICAL CHANGE HERE: NO WHITESPACE** */}
+            {isEditing ? (
+              <Input
+                type="text"
+                value={editedData[field.key] || ''}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(field.key, e.target.value)}
+                className="h-8 w-full"
+                disabled={isProcessing}
+                aria-label={`Edit ${field.label}`}
+              />
+            ) : (
+              <span className="py-2 block text-xl">{editedData[field.key] || '-'}</span>
+            )}
+          </TableCell>
+        </React.Fragment>
+      ))}
+      {/* Optional: Fill empty cells if the last row doesn't have 3 pairs */}
+      {rowFields.length < 3 && Array.from({ length: (3 - rowFields.length) * 2 }).map((_, i) => (
+        <TableCell key={`empty-${rowIndex}-${i}`} />
+      ))}
+    </TableRow>
+  ))}
+</TableBody>
         </Table>
       </CardContent>
     </Card>

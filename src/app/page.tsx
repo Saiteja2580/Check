@@ -98,9 +98,9 @@ export default function CheckSnapPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <main className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center">
-        <div className="w-full max-w-2xl mb-8 flex flex-col items-center space-y-6">
+    <div className="min-h-screen flex flex-col bg-background ">
+      <main className="flex-grow container mx-auto px-4 py-8 flex flex-col items-center w-[100%] min-h-screen">
+        <div className="w-[100%] mb-8 flex flex-col items-center space-y-6 h-[600px]">
           <CheckUploadForm
             onImageUpload={handleImageUpload}
             isProcessing={isProcessing}
@@ -133,13 +133,13 @@ export default function CheckSnapPage() {
         )}
 
         {extractedData && !isProcessing && (
-          <div className="w-full max-w-3xl">
+          <div className="w-full ">
             <CheckDataTable initialData={extractedData} onSave={handleDataUpdate} isProcessing={isProcessing} />
           </div>
         )}
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground border-t">
-        © {new Date().getFullYear()} CheckSnap. All rights reserved.
+        © {new Date().getFullYear()} SCSVMV. All rights reserved.
       </footer>
     </div>
   );

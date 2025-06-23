@@ -30,6 +30,7 @@ const ExtractCheckDataOutputSchema = z.object({
   date: z.string().describe('The date on the check. in format dd/mm/yyyy'),
   bankName: z.string().describe('The name of the bank.'),
   accountNumber: z.string().describe('The account number of the check.'),
+  checkNumber:z.string().describe('The Cheque no present in MICR or in the cheque')
 });
 export type ExtractCheckDataOutput = z.infer<typeof ExtractCheckDataOutputSchema>;
 
@@ -50,6 +51,7 @@ const prompt = ai.definePrompt({
   - Bank Name
   - IFSC Code
   - Account Number
+  - Cheque Number
 
   Ensure the extracted data is accurate and complete. If any information is unclear or missing, indicate it as such and dont extract amount in words directly from the image  and  calculate it from extracted amount.
 

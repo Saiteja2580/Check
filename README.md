@@ -9,8 +9,8 @@ Follow these steps to set up and run the application locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/scsvmv-cheque-scanner.git
-cd scsvmv-cheque-scanner
+git clone https://github.com/Saiteja2580/Check.git
+cd Check
 ```
 
 

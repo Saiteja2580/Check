@@ -42,6 +42,7 @@ const fieldOrder: Array<{ key: keyof EditableData; label: string }> = [
   { key: "ifscCode", label: "IFSC Code" }, // Corrected label typo
   { key: "accountNumber", label: "Account Number" },
   { key: "checkNumber", label: "Cheque Number" },
+  { key: "issuerName", label: "Issuer Name" }, // Added issuerName field
 ];
 
 // Helper function to chunk an array
